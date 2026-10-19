@@ -17,15 +17,32 @@
   <ul id="taskList"></ul>
 
   <script>
-    function addTask() {
-      var input = document.getElementById("taskInput");
-      var text = input.value;
-      if (text === "") { return; }
-      var li = document.createElement("li");
-      li.textContent = text;
-      li.onclick = function () { li.remove(); };
-      document.getElementById("taskList").appendChild(li);
-      input.value = "";
+    var tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function save() { localStorage.setItem("tasks", JSON.stringify(tasks)); }
+
+function render() {
+  var list = document.getElementById("taskList");
+  list.innerHTML = "";
+  tasks.forEach(function (text, i) {
+    var li = document.createElement("li");
+    li.textContent = text;
+    li.onclick = function () { tasks.splice(i, 1); save(); render(); };
+    list.appendChild(li);
+  });
+}
+
+function addTask() {
+  var input = document.getElementById("taskInput");
+  var text = input.value;
+  if (text === "") { return; }
+  tasks.push(text);
+  save();
+  render();
+  input.value = "";
+}
+
+render();
     }
   </script>
 </body>
